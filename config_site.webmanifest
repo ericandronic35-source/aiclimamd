@@ -1,0 +1,8 @@
+{
+  "name": "AiClima MD",
+  "short_name": "AiClima",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1a3a6b",
+  "background_color": "#ffffff"
+}

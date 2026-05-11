@@ -1,0 +1,14 @@
+NOTĂ IMAGINI / ASSETS
+========================
+Imaginile din acest proiect sunt incluse ca:
+- data:image/svg+xml (SVG inline în HTML) → extrase în assets/svg/
+- data:image/png;base64 (imagini PNG codificate base64 în HTML)
+- Slider hero: SVG-uri inline codificate în atribut src
+
+Fișierele SVG extrase:
+- assets/svg/logo-aiclima.svg  → Logo principal AiClima
+- assets/svg/favicon.svg       → Favicon (32x32)
+
+Fonturile sunt încărcate din Google Fonts (CDN):
+- Rajdhani (500, 600, 700)
+- Open Sans (400, 500, 600, 700)
