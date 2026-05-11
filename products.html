@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Produse — AiClima MD</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:       #f0f2f5;
+    --white:    #ffffff;
+    --navy:     #1a3a6b;
+    --navy2:    #122d56;
+    --blue:     #2563eb;
+    --blue-lt:  #e8f0fb;
+    --text:     #1e293b;
+    --muted:    #64748b;
+    --border:   #e2e8f0;
+    --green:    #059669;
+    --red:      #dc2626;
+    --gold:     #f59e0b;
+    --r:        12px;
+    --shadow:   0 1px 3px rgba(0,0,0,.08);
+    --shadow-md:0 4px 16px rgba(0,0,0,.10);
+  }
+  body { font-family: 'Open Sans', sans-serif; background: var(--bg); color: var(--text); }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  /* ── HEADER ── */
+  header {
+    background: #fff; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 900;
+    box-shadow: 0 1px 16px rgba(0,0,0,.08);
+  }
+  .hd-inner {
+    max-width: 1400px; margin: 0 auto; padding: 0 20px;
+    height: 64px; display: flex; align-items: center; gap: 14px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-box {
+    width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 800;
+  }
+  .logo-text { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 800; color: var(--text); }
+  .logo-text span { color: var(--blue); }
+  .hd-links { display: flex; gap: 2px; margin-left: 24px; }
+  .hd-link {
+    padding: 7px 14px; border-radius: 50px; font-size: 13px; font-weight: 600;
+    color: var(--muted); cursor: pointer; transition: .2s; border: none; background: transparent;
+    font-family: 'Rajdhani', sans-serif; letter-spacing: .6px; text-transform: uppercase;
+  }
+  .hd-link:hover, .hd-link.active { background: var(--blue-lt); color: var(--blue); }
+
+  /* ── SEARCH BAR ── */
+  .search-bar {
+    background: #fff; border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+  }
+  .search-inner { max-width: 1400px; margin: 0 auto; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .search-input {
+    flex: 1; min-width: 220px; padding: 10px 18px 10px 42px;
+    border: 1.5px solid var(--border); border-radius: 50px;
+    font-size: 14px; outline: none; transition: .2s; background: var(--bg);
+    font-family: inherit; position: relative;
+  }
+  .search-wrap { position: relative; flex: 1; min-width: 220px; }
+  .search-wrap .ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+  .search-input:focus { border-color: var(--blue); background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+  .count-badge {
+    background: var(--navy); color: #fff; border-radius: 50px;
+    padding: 6px 16px; font-size: 13px; font-weight: 700; white-space: nowrap;
+  }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 1400px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 260px 1fr; gap: 20px; }
+  @media(max-width: 768px) { .page { grid-template-columns: 1fr; } .sidebar { display: none; } }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 14px; }
+  .filter-card {
+    background: #fff; border-radius: var(--r); border: 1px solid var(--border);
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .filter-head {
+    padding: 14px 18px; border-bottom: 1px solid var(--border);
+    font-size: 13px; font-weight: 700; color: var(--navy);
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+  }
+  .filter-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 6px; }
+  .filter-opt {
+    display: flex; align-items: center; gap: 9px; cursor: pointer;
+    padding: 6px 8px; border-radius: 7px; transition: .15s; font-size: 13px;
+  }
+  .filter-opt:hover { background: var(--blue-lt); }
+  .filter-opt input { accent-color: var(--blue); width: 15px; height: 15px; cursor: pointer; }
+  .filter-opt label { cursor: pointer; font-weight: 500; flex: 1; }
+  .filter-opt .cnt { font-size: 11px; color: var(--muted); background: var(--bg); padding: 1px 7px; border-radius: 50px; }
+
+  /* Price range */
+  .price-range { display: flex; gap: 8px; align-items: center; }
+  .price-inp {
+    flex: 1; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 7px;
+    font-size: 13px; font-family: inherit; outline: none; transition: .15s;
+  }
+  .price-inp:focus { border-color: var(--blue); }
+  .btn-apply {
+    width: 100%; margin-top: 10px; padding: 9px;
+    background: var(--navy); color: #fff; border: none; border-radius: 7px;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: .2s; font-family: inherit;
+  }
+  .btn-apply:hover { background: var(--blue); }
+  .btn-reset {
+    width: 100%; padding: 7px; background: var(--bg); color: var(--muted);
+    border: 1px solid var(--border); border-radius: 7px; font-size: 12px;
+    cursor: pointer; transition: .15s; font-family: inherit; font-weight: 600;
+  }
+  .btn-reset:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── PRODUCT GRID ── */
+  .grid-area { flex: 1; }
+  .sort-bar {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .sort-label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .sort-btn {
+    padding: 6px 14px; border-radius: 50px; border: 1.5px solid var(--border);
+    font-size: 12px; font-weight: 700; cursor: pointer; transition: .2s; background: #fff;
+    font-family: 'Rajdhani', sans-serif; letter-spacing: .5px; text-transform: uppercase;
+  }
+  .sort-btn:hover, .sort-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+  .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+
+  /* ── PRODUCT CARD ── */
+  .pcard {
+    background: #fff; border-radius: var(--r); overflow: hidden;
+    box-shadow: var(--shadow); border: 1.5px solid var(--border); transition: .22s;
+    display: flex; flex-direction: column;
+  }
+  .pcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--blue); }
+  .pc-img {
+    height: 175px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(145deg, #f8fafc, #f1f5f9); padding: 16px; position: relative;
+  }
+  .pc-img img { max-height: 140px; object-fit: contain; transition: .3s; }
+  .pcard:hover .pc-img img { transform: scale(1.06); }
+  .pc-img .no-img { font-size: 56px; opacity: .25; }
+  .pc-badges { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .pb { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; letter-spacing: .3px; display: inline-block; }
+  .pb-sale  { background: linear-gradient(135deg,#ef4444,#dc2626); color: #fff; }
+  .pb-hit   { background: linear-gradient(135deg,#f97316,#ea580c); color: #fff; }
+  .pb-new   { background: linear-gradient(135deg,#059669,#047857); color: #fff; }
+  .pb-promo { background: linear-gradient(135deg,#7c3aed,#6d28d9); color: #fff; }
+
+  .pc-body { padding: 14px; display: flex; flex-direction: column; flex: 1; }
+  .pc-brand { font-size: 10px; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 4px; }
+  .pc-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35; margin-bottom: 4px; flex: 1; }
+  .pc-btu { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+  .pc-prices { display: flex; align-items: baseline; gap: 7px; margin-bottom: 12px; }
+  .pc-price { font-size: 18px; font-weight: 800; color: var(--navy); }
+  .pc-old { font-size: 12px; text-decoration: line-through; color: var(--muted); }
+  .pc-discount { font-size: 11px; font-weight: 700; color: #fff; background: var(--red); padding: 1px 7px; border-radius: 50px; }
+  .btn-cart {
+    width: 100%; padding: 10px; background: linear-gradient(135deg,var(--navy),var(--blue));
+    color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: .2s; font-family: inherit;
+  }
+  .btn-cart:hover { opacity: .88; transform: translateY(-1px); }
+
+  /* ── STATES ── */
+  .skeleton-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .skeleton-card { background: #fff; border-radius: var(--r); border: 1px solid var(--border); overflow: hidden; }
+  .skel { background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%); background-size: 400% 100%; animation: shimmer 1.4s ease-in-out infinite; }
+  @keyframes shimmer { 0% { background-position: 100% 0 } 100% { background-position: -100% 0 } }
+  .skel-img { height: 175px; }
+  .skel-line { height: 12px; border-radius: 6px; margin: 10px 14px; }
+  .skel-line.wide { width: 80%; }
+  .skel-line.medium { width: 55%; }
+  .skel-line.short { width: 35%; }
+
+  .empty { text-align: center; padding: 80px 20px; }
+  .empty .ico { font-size: 48px; margin-bottom: 14px; }
+  .empty h3 { font-size: 17px; color: var(--text); margin-bottom: 6px; }
+  .empty p { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd-inner">
+    <div class="logo">
+      <div class="logo-box">A</div>
+      <div class="logo-text">Ai<span>Clima</span></div>
+    </div>
+    <nav class="hd-links">
+      <a href="aiclima-fixed.html" class="hd-link">🏠 Acasă</a>
+      <a href="products.html"      class="hd-link active">📦 Produse</a>
+      <a href="admin.html"         class="hd-link">⚙️ Admin</a>
+    </nav>
+  </div>
+</header>
+
+<div class="search-bar">
+  <div class="search-inner">
+    <div class="search-wrap">
+      <span class="ico">🔍</span>
+      <input class="search-input" id="searchInput" type="text" placeholder="Caută condiționer, brand, model…" />
+    </div>
+    <div class="count-badge" id="countBadge">Se încarcă…</div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- SIDEBAR FILTERS -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="filter-card">
+      <div class="filter-head">🏷️ Brand</div>
+      <div class="filter-body" id="brandFilters"><!-- JS --></div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-head">❄️ Capacitate (BTU)</div>
+      <div class="filter-body" id="btuFilters"><!-- JS --></div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-head">📂 Categorie</div>
+      <div class="filter-body" id="catFilters"><!-- JS --></div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-head">💰 Preț (MDL)</div>
+      <div class="filter-body">
+        <div class="price-range">
+          <input class="price-inp" id="priceMin" type="number" placeholder="Min" />
+          <span style="color:var(--muted);font-size:12px">—</span>
+          <input class="price-inp" id="priceMax" type="number" placeholder="Max" />
+        </div>
+        <button class="btn-apply" onclick="applyFilters()">Aplică</button>
+        <button class="btn-reset" onclick="resetFilters()">Resetează filtrele</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="grid-area">
+    <div class="sort-bar">
+      <span class="sort-label">Sortează:</span>
+      <button class="sort-btn active" data-sort="newest" onclick="setSort(this,'newest')">Nou</button>
+      <button class="sort-btn" data-sort="price-asc"  onclick="setSort(this,'price-asc')">Preț ↑</button>
+      <button class="sort-btn" data-sort="price-desc" onclick="setSort(this,'price-desc')">Preț ↓</button>
+      <button class="sort-btn" data-sort="name"       onclick="setSort(this,'name')">A–Z</button>
+    </div>
+    <div id="prodGrid">
+      <!-- skeleton -->
+      <div class="skeleton-grid">
+        ${Array(8).fill(`
+          <div class="skeleton-card">
+            <div class="skel skel-img"></div>
+            <div class="skel skel-line wide"></div>
+            <div class="skel skel-line medium"></div>
+            <div class="skel skel-line short"></div>
+          </div>`).join("")}
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script type="module">
+import { db }    from "./firebase.js";
+import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { applyFilters as applyF, resetFilters as resetF, initFilters } from "./filters.js";
+
+let allProducts   = [];
+let currentSort   = "newest";
+let activeFilters = { brands: [], btus: [], cats: [], priceMin: null, priceMax: null, search: "" };
+
+// ── LOAD ──────────────────────────────────────────────────────────────
+async function loadProducts() {
+  try {
+    const q    = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    const snap = await getDocs(q);
+    allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    initFilters(allProducts, activeFilters, render);
+    render();
+  } catch (err) {
+    document.getElementById("prodGrid").innerHTML =
+      `<div class="empty"><div class="ico">❌</div><h3>Eroare la încărcare</h3><p>${err.message}</p></div>`;
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────
+function render() {
+  let list = applyF(allProducts, activeFilters);
+  list = sortList(list, currentSort);
+
+  document.getElementById("countBadge").textContent = `${list.length} produse`;
+
+  if (list.length === 0) {
+    document.getElementById("prodGrid").innerHTML =
+      `<div class="empty"><div class="ico">🔍</div><h3>Niciun rezultat</h3><p>Încearcă alte filtre sau termeni de căutare.</p></div>`;
+    return;
+  }
+
+  document.getElementById("prodGrid").innerHTML = `<div class="pgrid">${list.map(cardHTML).join("")}</div>`;
+}
+
+function sortList(arr, sort) {
+  return [...arr].sort((a, b) => {
+    if (sort === "price-asc")  return a.price - b.price;
+    if (sort === "price-desc") return b.price - a.price;
+    if (sort === "name")       return a.name.localeCompare(b.name, "ro");
+    return 0; // newest (already ordered from Firestore)
+  });
+}
+
+function cardHTML(p) {
+  const disc = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+  const badgeMap = { sale: "pb-sale", hit: "pb-hit", new: "pb-new", promo: "pb-promo" };
+  const badgeLabel = { sale: "SALE", hit: "HIT", new: "NOU", promo: "PROMO" };
+  const badges = (p.badges || []).map(b =>
+    `<span class="pb ${badgeMap[b] || ''}">${badgeLabel[b] || b}</span>`).join("");
+
+  return `
+    <div class="pcard">
+      <div class="pc-img">
+        ${badges ? `<div class="pc-badges">${badges}</div>` : ""}
+        ${p.imageUrl
+          ? `<img src="${p.imageUrl}" alt="${p.name}" loading="lazy" />`
+          : `<div class="no-img">❄️</div>`}
+      </div>
+      <div class="pc-body">
+        <div class="pc-brand">${p.brand || ""}</div>
+        <div class="pc-name">${p.name}</div>
+        ${p.btu ? `<div class="pc-btu">❄️ ${p.btu} BTU</div>` : ""}
+        <div class="pc-prices">
+          <span class="pc-price">${p.price.toLocaleString("ro-MD")} MDL</span>
+          ${p.oldPrice ? `<span class="pc-old">${p.oldPrice.toLocaleString("ro-MD")}</span>` : ""}
+          ${disc > 0  ? `<span class="pc-discount">-${disc}%</span>` : ""}
+        </div>
+        <button class="btn-cart">🛒 Adaugă în coș</button>
+      </div>
+    </div>`;
+}
+
+// ── SEARCH ────────────────────────────────────────────────────────────
+document.getElementById("searchInput").addEventListener("input", e => {
+  activeFilters.search = e.target.value.toLowerCase();
+  render();
+});
+
+// ── SORT ──────────────────────────────────────────────────────────────
+window.setSort = function(btn, sort) {
+  document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  currentSort = sort;
+  render();
+};
+
+// ── FILTERS ───────────────────────────────────────────────────────────
+window.applyFilters = function() {
+  activeFilters.priceMin = parseFloat(document.getElementById("priceMin").value) || null;
+  activeFilters.priceMax = parseFloat(document.getElementById("priceMax").value) || null;
+  render();
+};
+
+window.resetFilters = function() {
+  resetF(activeFilters);
+  document.getElementById("priceMin").value = "";
+  document.getElementById("priceMax").value = "";
+  document.getElementById("searchInput").value = "";
+  document.querySelectorAll(".filter-body input[type=checkbox]").forEach(cb => cb.checked = false);
+  render();
+};
+
+loadProducts();
+</script>
+
+</body>
+</html>

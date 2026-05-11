@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Panel — AiClima</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:       #f0f4f9;
+    --white:    #ffffff;
+    --navy:     #1a3a6b;
+    --blue:     #2563eb;
+    --blue-lt:  #eff4ff;
+    --green:    #059669;
+    --red:      #dc2626;
+    --text:     #1e293b;
+    --muted:    #64748b;
+    --border:   #e2e8f0;
+    --r:        12px;
+    --shadow:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-lg:0 8px 32px rgba(0,0,0,.10);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy); color: #fff; padding: 16px 32px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.18);
+  }
+  header .logo { font-size: 22px; font-weight: 800; letter-spacing: .5px; }
+  header .logo span { color: #60a5fa; }
+  header .badge {
+    background: rgba(255,255,255,.15); border-radius: 50px;
+    padding: 3px 12px; font-size: 11px; font-weight: 700;
+    letter-spacing: .5px; text-transform: uppercase;
+  }
+
+  /* ── LAYOUT ── */
+  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 24px; max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+  @media(max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white); border-radius: var(--r);
+    box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .card-head {
+    padding: 18px 24px; border-bottom: 1px solid var(--border);
+    font-weight: 700; font-size: 15px; color: var(--navy);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-head .icon { font-size: 18px; }
+  .card-body { padding: 24px; }
+
+  /* ── FORM ── */
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+  input, select, textarea {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 8px; font-family: inherit; font-size: 14px;
+    color: var(--text); background: #fafbff; transition: .2s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+  textarea { resize: vertical; min-height: 80px; }
+  .form-group { margin-bottom: 16px; }
+
+  /* ── BADGES SELECT ── */
+  .badges-wrap { display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge-cb { display: none; }
+  .badge-label {
+    cursor: pointer; padding: 5px 14px; border-radius: 50px; font-size: 12px;
+    font-weight: 700; border: 1.5px solid var(--border); color: var(--muted);
+    transition: .15s; user-select: none;
+  }
+  .badge-cb:checked + .badge-label.sale  { background: #fee2e2; border-color: #dc2626; color: #dc2626; }
+  .badge-cb:checked + .badge-label.hit   { background: #ffedd5; border-color: #f97316; color: #f97316; }
+  .badge-cb:checked + .badge-label.new   { background: #d1fae5; border-color: #059669; color: #059669; }
+  .badge-cb:checked + .badge-label.promo { background: #ede9fe; border-color: #7c3aed; color: #7c3aed; }
+
+  /* ── IMAGE UPLOAD ── */
+  .img-drop {
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 24px; text-align: center; cursor: pointer;
+    transition: .2s; background: #fafbff; position: relative;
+  }
+  .img-drop:hover, .img-drop.drag { border-color: var(--blue); background: var(--blue-lt); }
+  .img-drop input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .img-drop .icon { font-size: 32px; margin-bottom: 8px; }
+  .img-drop p { font-size: 13px; color: var(--muted); }
+  .img-drop .hint { font-size: 11px; margin-top: 4px; color: #94a3b8; }
+  #imgPreview { max-width: 100%; max-height: 160px; object-fit: contain; margin: 12px auto 0; display: none; border-radius: 8px; }
+  #uploadProgress {
+    display: none; margin-top: 12px; background: var(--border);
+    border-radius: 50px; height: 6px; overflow: hidden;
+  }
+  #uploadProgress .bar { height: 100%; background: var(--blue); transition: width .3s; width: 0%; }
+
+  /* ── SUBMIT BUTTON ── */
+  .btn-submit {
+    width: 100%; padding: 13px; background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: .2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-submit:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(37,99,235,.3); }
+  .btn-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px; padding: 14px 20px;
+    border-radius: 10px; font-size: 14px; font-weight: 600;
+    color: #fff; box-shadow: var(--shadow-lg); z-index: 9999;
+    transform: translateY(80px); opacity: 0; transition: .35s cubic-bezier(.4,0,.2,1);
+    max-width: 320px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.success { background: var(--green); }
+  #toast.error   { background: var(--red);   }
+
+  /* ── PRODUCT LIST ── */
+  .prod-list { display: flex; flex-direction: column; gap: 10px; max-height: 600px; overflow-y: auto; }
+  .prod-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px; border-radius: 10px; border: 1px solid var(--border);
+    background: #fafbff; transition: .2s;
+  }
+  .prod-item:hover { border-color: var(--blue); }
+  .prod-item img { width: 52px; height: 52px; object-fit: contain; border-radius: 8px; background: #fff; flex-shrink: 0; }
+  .prod-item .no-img { width: 52px; height: 52px; border-radius: 8px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .prod-info { flex: 1; min-width: 0; }
+  .prod-info .name { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .prod-info .meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .prod-info .price { font-size: 13px; font-weight: 700; color: var(--blue); }
+  .btn-del {
+    background: #fee2e2; color: var(--red); border: none; border-radius: 6px;
+    width: 32px; height: 32px; cursor: pointer; font-size: 16px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; transition: .15s;
+  }
+  .btn-del:hover { background: #fca5a5; }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+
+  .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+  .stat { background: var(--blue-lt); border-radius: 10px; padding: 14px; text-align: center; }
+  .stat .val { font-size: 22px; font-weight: 800; color: var(--navy); }
+  .stat .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; text-transform: uppercase; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Ai<span>Clima</span></div>
+  <div class="badge">⚙️ Admin Panel</div>
+</header>
+
+<div class="layout">
+
+  <!-- FORM -->
+  <div>
+    <div class="card">
+      <div class="card-head"><span class="icon">➕</span> Adaugă Produs</div>
+      <div class="card-body">
+
+        <div class="form-group">
+          <label>Nume produs *</label>
+          <input id="fName" type="text" placeholder="ex: Daikin FTXC35C 12000 BTU" />
+        </div>
+
+        <div class="form-group">
+          <label>Brand *</label>
+          <select id="fBrand">
+            <option value="">— Selectează brand —</option>
+            <option>Daikin</option><option>Samsung</option><option>Gree</option>
+            <option>Cooper &amp; Hunter</option><option>Mitsubishi</option>
+            <option>Hyundai</option><option>Vivax</option><option>Toyotomi</option>
+            <option>Haier</option><option>LG</option><option>Altro</option>
+          </select>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label>Preț (MDL) *</label>
+            <input id="fPrice" type="number" min="0" placeholder="12900" />
+          </div>
+          <div class="form-group">
+            <label>Preț vechi (MDL)</label>
+            <input id="fOldPrice" type="number" min="0" placeholder="15500" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Capacitate (BTU)</label>
+          <select id="fBtu">
+            <option value="">— Selectează —</option>
+            <option value="9000">9000 BTU</option>
+            <option value="12000">12000 BTU</option>
+            <option value="18000">18000 BTU</option>
+            <option value="24000">24000 BTU</option>
+            <option value="36000">36000 BTU</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Categorie</label>
+          <select id="fCategory">
+            <option value="split">Split</option>
+            <option value="multi">Multi-Split</option>
+            <option value="caseta">Casetă</option>
+            <option value="duct">Duct</option>
+            <option value="portabil">Portabil</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Badge-uri</label>
+          <div class="badges-wrap">
+            <input class="badge-cb" type="checkbox" id="bSale" value="sale" />
+            <label class="badge-label sale" for="bSale">🔥 SALE</label>
+
+            <input class="badge-cb" type="checkbox" id="bHit" value="hit" />
+            <label class="badge-label hit" for="bHit">⚡ HIT</label>
+
+            <input class="badge-cb" type="checkbox" id="bNew" value="new" />
+            <label class="badge-label new" for="bNew">✨ NOU</label>
+
+            <input class="badge-cb" type="checkbox" id="bPromo" value="promo" />
+            <label class="badge-label promo" for="bPromo">🎁 PROMO</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Descriere scurtă</label>
+          <textarea id="fDesc" placeholder="Inverter A+++, WiFi Smart, silentios 19dB..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Imagine produs</label>
+          <div class="img-drop" id="imgDrop">
+            <input type="file" id="fImg" accept="image/*" />
+            <div class="icon">🖼️</div>
+            <p>Click sau trage imaginea aici</p>
+            <p class="hint">JPG, PNG, WebP — max 5MB</p>
+          </div>
+          <img id="imgPreview" alt="Preview" />
+          <div id="uploadProgress"><div class="bar" id="progressBar"></div></div>
+        </div>
+
+        <button class="btn-submit" id="btnSubmit" onclick="addProduct()">
+          <span id="btnIcon">✅</span>
+          <span id="btnText">Salvează în Firebase</span>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div>
+    <div class="stats" id="stats">
+      <div class="stat"><div class="val" id="sTotal">—</div><div class="lbl">Total produse</div></div>
+      <div class="stat"><div class="val" id="sBrands">—</div><div class="lbl">Branduri</div></div>
+      <div class="stat"><div class="val" id="sPromo">—</div><div class="lbl">În promoție</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="icon">📦</span> Produse salvate</div>
+      <div class="card-body">
+        <div class="prod-list" id="prodList">
+          <div class="empty-state"><div class="icon">📭</div><p>Se încarcă...</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { db, storage } from "./firebase.js";
+import {
+  collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  ref, uploadBytesResumable, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+// ── TOAST ──────────────────────────────────────────────────────────────
+function toast(msg, type = "success") {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  setTimeout(() => el.classList.remove("show"), 3500);
+}
+
+// ── IMAGE PREVIEW ──────────────────────────────────────────────────────
+document.getElementById("fImg").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const prev = document.getElementById("imgPreview");
+  prev.src = URL.createObjectURL(file);
+  prev.style.display = "block";
+});
+
+const drop = document.getElementById("imgDrop");
+drop.addEventListener("dragover", e => { e.preventDefault(); drop.classList.add("drag"); });
+drop.addEventListener("dragleave", () => drop.classList.remove("drag"));
+drop.addEventListener("drop", e => {
+  e.preventDefault(); drop.classList.remove("drag");
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    document.getElementById("fImg").files = e.dataTransfer.files;
+    document.getElementById("imgPreview").src = URL.createObjectURL(file);
+    document.getElementById("imgPreview").style.display = "block";
+  }
+});
+
+// ── ADD PRODUCT ────────────────────────────────────────────────────────
+window.addProduct = async function() {
+  const name      = document.getElementById("fName").value.trim();
+  const brand     = document.getElementById("fBrand").value;
+  const price     = parseFloat(document.getElementById("fPrice").value);
+  const oldPrice  = parseFloat(document.getElementById("fOldPrice").value) || null;
+  const btu       = document.getElementById("fBtu").value;
+  const category  = document.getElementById("fCategory").value;
+  const desc      = document.getElementById("fDesc").value.trim();
+  const imgFile   = document.getElementById("fImg").files[0];
+  const badges    = [...document.querySelectorAll(".badge-cb:checked")].map(cb => cb.value);
+
+  if (!name)  { toast("Introduceți numele produsului!", "error"); return; }
+  if (!brand) { toast("Selectați brandul!", "error"); return; }
+  if (!price) { toast("Introduceți prețul!", "error"); return; }
+
+  const btn  = document.getElementById("btnSubmit");
+  const icon = document.getElementById("btnIcon");
+  const txt  = document.getElementById("btnText");
+  btn.disabled = true;
+  icon.textContent = "⏳"; txt.textContent = "Se salvează...";
+
+  let imageUrl = null;
+
+  try {
+    // ── Upload imagine ──
+    if (imgFile) {
+      icon.textContent = "📤"; txt.textContent = "Se urcă imaginea...";
+      const imgRef  = ref(storage, `products/${Date.now()}_${imgFile.name}`);
+      const task    = uploadBytesResumable(imgRef, imgFile);
+      const prog    = document.getElementById("uploadProgress");
+      const bar     = document.getElementById("progressBar");
+      prog.style.display = "block";
+
+      await new Promise((resolve, reject) => {
+        task.on("state_changed",
+          snap => { bar.style.width = (snap.bytesTransferred / snap.totalBytes * 100) + "%"; },
+          reject,
+          resolve
+        );
+      });
+      imageUrl = await getDownloadURL(task.snapshot.ref);
+      prog.style.display = "none";
+    }
+
+    // ── Salvează în Firestore ──
+    icon.textContent = "💾"; txt.textContent = "Se salvează în Firestore...";
+    await addDoc(collection(db, "products"), {
+      name, brand, price, oldPrice, btu, category, desc, badges, imageUrl,
+      inStock: true,
+      createdAt: serverTimestamp()
+    });
+
+    toast("✅ Produsul a fost adăugat cu succes!");
+    resetForm();
+    loadProducts();
+
+  } catch (err) {
+    console.error(err);
+    toast("❌ Eroare: " + err.message, "error");
+  } finally {
+    btn.disabled = false;
+    icon.textContent = "✅"; txt.textContent = "Salvează în Firebase";
+  }
+};
+
+function resetForm() {
+  ["fName","fPrice","fOldPrice","fDesc"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("fBrand").selectedIndex = 0;
+  document.getElementById("fBtu").selectedIndex = 0;
+  document.getElementById("fCategory").selectedIndex = 0;
+  document.querySelectorAll(".badge-cb").forEach(cb => cb.checked = false);
+  const prev = document.getElementById("imgPreview");
+  prev.src = ""; prev.style.display = "none";
+  document.getElementById("fImg").value = "";
+}
+
+// ── LOAD PRODUCTS ──────────────────────────────────────────────────────
+async function loadProducts() {
+  const list = document.getElementById("prodList");
+  list.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Se încarcă...</p></div>';
+
+  try {
+    const q    = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    const snap = await getDocs(q);
+    const docs = snap.docs;
+
+    document.getElementById("sTotal").textContent  = docs.length;
+    document.getElementById("sBrands").textContent = new Set(docs.map(d => d.data().brand)).size;
+    document.getElementById("sPromo").textContent  = docs.filter(d => (d.data().badges||[]).length > 0).length;
+
+    if (docs.length === 0) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>Niciun produs adăugat</p></div>';
+      return;
+    }
+
+    list.innerHTML = "";
+    docs.forEach(docSnap => {
+      const d  = docSnap.data();
+      const id = docSnap.id;
+      const item = document.createElement("div");
+      item.className = "prod-item";
+      item.innerHTML = `
+        ${d.imageUrl
+          ? `<img src="${d.imageUrl}" alt="${d.name}" loading="lazy" />`
+          : `<div class="no-img">📦</div>`}
+        <div class="prod-info">
+          <div class="name">${d.name}</div>
+          <div class="meta">${d.brand} · ${d.category} ${d.btu ? `· ${d.btu} BTU` : ""}</div>
+          <div class="price">${d.price.toLocaleString("ro-MD")} MDL
+            ${d.oldPrice ? `<small style="text-decoration:line-through;color:#94a3b8;font-weight:400"> ${d.oldPrice.toLocaleString("ro-MD")}</small>` : ""}
+          </div>
+        </div>
+        <button class="btn-del" title="Șterge" onclick="delProduct('${id}')">🗑</button>
+      `;
+      list.appendChild(item);
+    });
+  } catch (err) {
+    list.innerHTML = `<div class="empty-state"><div class="icon">❌</div><p>${err.message}</p></div>`;
+  }
+}
+
+// ── DELETE PRODUCT ─────────────────────────────────────────────────────
+window.delProduct = async function(id) {
+  if (!confirm("Ștergi produsul?")) return;
+  try {
+    await deleteDoc(doc(db, "products", id));
+    toast("🗑 Produs șters", "success");
+    loadProducts();
+  } catch (err) {
+    toast("Eroare la ștergere: " + err.message, "error");
+  }
+};
+
+// ── INIT ───────────────────────────────────────────────────────────────
+loadProducts();
+</script>
+</body>
+</html>
